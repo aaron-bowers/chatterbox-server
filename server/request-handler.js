@@ -10,6 +10,8 @@ this file and include it in basic-server.js so that it actually works.
 
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
+// test committing
+
 **************************************************************/
 
 var requestHandler = function(request, response) {
