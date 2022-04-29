@@ -2,7 +2,6 @@
 var http = require('http');
 const {defaultCorsHeaders, handleRequest} = require('./request-handler.js');
 
-
 // Every server needs to listen on a port with a unique number. The
 // standard port for HTTP servers is port 80, but that port is
 // normally already claimed by another server and/or not accessible
@@ -14,8 +13,6 @@ var port = 3000;
 // we'll have it listen on the IP address 127.0.0.1, which is a
 // special address that always refers to localhost.
 var ip = '127.0.0.1';
-
-
 
 // We use node's http module to create a server.
 //
@@ -29,9 +26,7 @@ console.log('Listening on http://' + ip + ':' + port);
 server.listen(port, ip);
 
 // To start this server, run:
-//
-//   node basic-server.js
-//
+//   node server/basic-server.js
 // on the command line.
 //
 // To connect to the server, load http://127.0.0.1:3000 in your web
