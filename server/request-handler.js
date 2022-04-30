@@ -31,6 +31,7 @@ var defaultCorsHeaders = {
 
 var requestHandler = function(request, response) {
   // console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  console.log('request data: ', request);
 
   // The outgoing status.
   var statusCode = 200;
@@ -39,7 +40,7 @@ var requestHandler = function(request, response) {
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'text/plain';
 
-  if (request.url === 'http://127.0.0.1:3000/classes/messages') {
+  if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
       headers['Content-Type'] = 'application/JSON';
       response.writeHead(200, headers);
@@ -62,7 +63,7 @@ var requestHandler = function(request, response) {
       response.end('Not a valid request from /classes/messages');
     }
   } else {
-    response.writeHead(400, headers);
+    response.writeHead(404, headers);
     response.end('Please make a request from a valid directory (hint: try /classes/messages ;) )');
   }
   // data = [{username: ..., text: ...}]
@@ -89,4 +90,4 @@ var requestHandler = function(request, response) {
 };
 
 module.exports.defaultCorsHeaders = defaultCorsHeaders;
-module.exports.handleRequest = requestHandler;
+module.exports.requestHandler = requestHandler;
