@@ -10,21 +10,16 @@ const defaultCorsHeaders = {
 
 var counter = 0;
 
+const headers = defaultCorsHeaders;
+
 const requestHandler = function(request, response) {
-  const headers = defaultCorsHeaders;
-  // headers['Content-Type'] = 'text/plain';
-
-  headers['Content-Type'] = 'application/JSON';
-
-
   if (request.url === '/classes/messages') {
     if (request.method === 'OPTIONS') {
-      delete headers['Content-Type'];
-      response.writeHead(200, headers);
+      response.writeHead(200, {'Content-Type': 'application/JSON'});
       response.end();
     }
     if (request.method === 'GET') {
-      response.writeHead(200, headers);
+      response.writeHead(200, {'Content-Type': 'application/JSON'});
       response.end(JSON.stringify(messages));
     } else if (request.method === 'POST') {
       let data = '';
@@ -32,27 +27,21 @@ const requestHandler = function(request, response) {
         data += chunk;
       });
       request.on('end', () => {
-        // if (data === '') { data = '{}'; }
         let message = JSON.parse(data);
         if (message.username === undefined && message.text === undefined) {
-          response.writeHead(418, headers);
+          response.writeHead(418, {'Content-Type': 'text/plain'});
           response.end('I\'m a little teapot, short and stout!');
         } else {
           message.createdAt = new Date();
           message['message_id'] = nanoid();
-          // message.id = nanoid(); // create a unique id for each msg
           messages.push(message);
-          response.writeHead(201, headers);
+          response.writeHead(201, {'Content-Type': 'text/plain'});
           response.end(JSON.stringify([{ 'message_id': message['message_id'] }]));
         }
       });
     }
-    // else {
-    //   response.writeHead(418, headers);
-    //   response.end('Not a valid request from /classes/messages');
-    // }
   } else {
-    response.writeHead(404, headers);
+    response.writeHead(404, {'Content-Type': 'text/plain'});
     response.end('Please make a request from a valid directory (hint: try /classes/messages ;) )');
   }
 };
