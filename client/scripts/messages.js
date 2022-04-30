@@ -16,6 +16,7 @@ var Messages = {
     var length = Object.keys(Messages._data).length;
 
     for (let message of messages) {
+      console.log('message: ', message);
       Messages._data[message.message_id] = Messages._conform(message);
     }
 
@@ -32,5 +33,5 @@ var Messages = {
     message.roomname = message.roomname || '';
     return message;
   }
-  
+
 };

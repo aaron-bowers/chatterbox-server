@@ -1,6 +1,8 @@
-var handler = require('../request-handler');
-var expect = require('chai').expect;
-var stubs = require('./Stubs');
+const _ = require('underscore');
+
+const handler = require('../request-handler');
+const expect = require('chai').expect;
+const stubs = require('./Stubs');
 
 describe('Node Server Request Listener Function', function() {
   it('Should answer GET requests for /classes/messages with a 200 status code', function() {
@@ -90,5 +92,69 @@ describe('Node Server Request Listener Function', function() {
     expect(res._responseCode).to.equal(404);
     expect(res._ended).to.equal(true);
   });
+
+  it('Should assign timestamp to message', function() {
+    var stubMsg = {
+      username: 'Jono',
+      text: 'Do my bidding!'
+    };
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(201);
+
+    // Now if we request the log for that room the message we posted should be there:
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(200);
+    var messages = JSON.parse(res._data);
+    expect(messages.length).to.be.above(0);
+    expect(messages[0].createdAt.slice(0, 4)).to.equal('2022');
+    expect(res._ended).to.equal(true);
+  });
+
+  it('Should assign unique id to each message', function() {
+    var stubMsgA = {
+      username: 'Jono',
+      text: 'Do my bidding!'
+    };
+    var stubMsgB = {
+      username: 'Skip',
+      text: 'Rebecca Black is my life!'
+    };
+
+    var reqA = new stubs.request('/classes/messages', 'POST', stubMsgA);
+    var resA = new stubs.response();
+    handler.requestHandler(reqA, resA);
+
+    var reqB = new stubs.request('/classes/messages', 'POST', stubMsgB);
+    var resB = new stubs.response();
+    handler.requestHandler(reqB, resB);
+
+    var req = new stubs.request('/classes/messages', 'GET');
+    var res = new stubs.response();
+    handler.requestHandler(req, res);
+    let messages = JSON.parse(res._data);
+    let uniqueMessages = _.uniq(messages, (message) => {
+      return message.id;
+    });
+
+    expect(messages).to.eql(uniqueMessages);
+  });
+
+  // it('Should 418 when using an invalid request method for /classes/messages', function() {
+  //   var req = new stubs.request('/classes/messages', 'DELETE');
+  //   var res = new stubs.response();
+
+  //   handler.requestHandler(req, res);
+
+  //   expect(res._responseCode).to.equal(418);
+  //   expect(res._ended).to.equal(true);
+  // });
 
 });
